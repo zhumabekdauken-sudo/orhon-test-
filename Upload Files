@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Орхон-Енисей — Тест</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e3a8a, #4f46e5);
+            padding: 20px;
+            color: #1e293b;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 850px;
+            margin: auto;
+        }
+
+        /* Заголовок */
+        .header {
+            text-align: center;
+            color: white;
+            padding: 30px 10px;
+        }
+
+        .header h1 {
+            margin: 0 0 10px;
+            font-size: 34px;
+        }
+
+        .header p {
+            margin: 0;
+            color: #dbeafe;
+            font-size: 18px;
+        }
+
+        /* Карточка */
+        .quiz-card {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        /* Верхняя панель */
+        .quiz-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #64748b;
+            font-weight: bold;
+        }
+
+        /* Прогресс */
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress {
+            height: 100%;
+            width: 10%;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            transition: width 0.3s ease;
+        }
+
+        /* Вопрос */
+        .question {
+            font-size: 24px;
+            line-height: 1.4;
+            margin-bottom: 25px;
+        }
+
+        /* Ответы */
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .answer {
+            width: 100%;
+            padding: 17px;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            background: white;
+            text-align: left;
+            font-size: 17px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .answer:hover {
+            border-color: #60a5fa;
+            background: #eff6ff;
+        }
+
+        .answer.selected {
+            border-color: #2563eb;
+            background: #dbeafe;
+        }
+
+        .answer.correct {
+            border-color: #16a34a;
+            background: #dcfce7;
+        }
+
+        .answer.wrong {
+            border-color: #dc2626;
+            background: #fee2e2;
+        }
+
+        /* Кнопка */
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        .next-button,
+        .restart-button {
+            border: none;
+            border-radius: 13px;
+            padding: 14px 25px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .next-button:hover,
+        .restart-button:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .next-button:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Результат */
+        .result {
+            text-align: center;
+        }
+
+        .result-icon {
+            font-size: 65px;
+            margin-bottom: 10px;
+        }
+
+        .result h2 {
+            font-size: 30px;
+            margin: 10px 0;
+        }
+
+        .score {
+            font-size: 70px;
+            font-weight: bold;
+            color: #2563eb;
+            margin: 15px 0;
+        }
+
+        .result-message {
+            font-size: 19px;
+            color: #475569;
+            margin-bottom: 25px;
+        }
+
+        /* Разбор */
+        .review {
+            text-align: left;
+            margin-top: 30px;
+        }
+
+        .review h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+
+        .review-item {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            background: #f8fafc;
+            border-left: 5px solid;
+        }
+
+        .review-item.correct-item {
+            border-color: #16a34a;
+        }
+
+        .review-item.wrong-item {
+            border-color: #dc2626;
+        }
+
+        .review-question {
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        .correct-text {
+            color: #15803d;
+        }
+
+        .wrong-text {
+            color: #dc2626;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Мобильная версия */
+        @media (max-width: 600px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 20px 5px;
+            }
+
+            .header h1 {
+                font-size: 25px;
+            }
+
+            .header p {
+                font-size: 15px;
+            }
+
+            .quiz-card {
+                padding: 20px;
+                border-radius: 20px;
+            }
+
+            .question {
+                font-size: 20px;
+            }
+
+            .answer {
+                font-size: 16px;
+                padding: 15px;
+            }
+
+            .score {
+                font-size: 55px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>📜 Орхон-Енисей жазба ескерткіштері</h1>
+        <p>Тарих пәнінен интерактивті тест</p>
+    </div>
+
+    <!-- ТЕСТ -->
+    <div class="quiz-card" id="quiz">
+
+        <div class="quiz-top">
+            <span id="questionNumber">1 / 10</span>
+            <span id="points">0 балл</span>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress" id="progress"></div>
+        </div>
+
+        <div class="question" id="question"></div>
+
+        <div class="answers" id="answers"></div>
+
+        <div class="button-container">
+            <button
+                class="next-button"
+                id="nextButton"
+                disabled
+                onclick="nextQuestion()">
+                Келесі →
+            </button>
+        </div>
+
+    </div>
+
+
+    <!-- РЕЗУЛЬТАТ -->
+    <div class="quiz-card result hidden" id="result">
+
+        <div class="result-icon" id="resultIcon">
+            🎉
+        </div>
+
+        <h2>Тест аяқталды!</h2>
+
+        <div class="score" id="finalScore">
+            0 / 10
+        </div>
+
+        <div class="result-message" id="resultMessage"></div>
+
+        <div class="review">
+            <h3>📋 Жауаптарды тексеру</h3>
+            <div id="reviewList"></div>
+        </div>
+
+        <br>
+
+        <button
+            class="restart-button"
+            onclick="restartQuiz()">
+            🔄 Қайта тапсыру
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /*
+    ========================================
+    СҰРАҚТАР
+    ========================================
+    */
+
+    const questions = [
+
+        {
+            question: "Орхон-Енисей жазба ескерткіштері қай кезеңге жатады?",
+            answers: [
+                "V–VI ғасырлар",
+                "VII–VIII ғасырлар",
+                "IX–X ғасырлар",
+                "XI–XII ғасырлар"
+            ],
+            correct: 1
+        },
+
+        {
+            question: "Орхон-Енисей жазба ескерткіштері қай халықтың тарихына қатысты?",
+            answers: [
+                "Түркі халықтарының",
+                "Қытай халқының",
+                "Парсы халқының",
+                "Үнді халқының"
+            ],
+            correct: 0
+        },
+
+        {
+            question: "Орхон жазба ескерткіштері қай өзеннің бойынан табылған?",
+            answers: [
+                "Сырдария",
+                "Ертіс",
+                "Орхон",
+                "Іле"
+            ],
+            correct: 2
+        },
+
+        {
+            question: "Күлтегін кім болған?",
+            answers: [
+                "Түрік қағанатының батыры, әскери қолбасшысы",
+                "Қытай билеушісі",
+                "Араб ғалымы",
+                "Моңғол ханы"
+            ],
+            correct: 0
+        },
+
+        {
+            question: "Тоныкөк кім болған?",
+            answers: [
+                "Түрік қағанатының ақылгөй кеңесшісі",
+                "Саудагер",
+                "Қолөнерші",
+                "Елші"
+            ],
+            correct: 0
+        },
+
+        {
+            question: "Білге қаған кім болған?",
+            answers: [
+                "Түрік қағанатының билеушісі",
+                "Қытай императоры",
+                "Ғұн көсемі",
+                "Парсы патшасы"
+            ],
+            correct: 0
+        },
+
+        {
+            question: "Орхон жазба ескерткіштері қандай жазумен жазылған?",
+            answers: [
+                "Араб жазуымен",
+                "Көне түркі руникалық жазуымен",
+                "Латын жазуымен",
+                "Кирилл жазуымен"
+            ],
+            correct: 1
+        },
+
+        {
+            question: "Күлтегін ескерткіші қай жылы орнатылған?",
+            answers: [
+                "682 жылы",
+                "732 жылы",
+                "744 жылы",
+                "840 жылы"
+            ],
+            correct: 1
+        },
+
+        {
+            question: "Орхон-Енисей жазбаларының басты мақсаты қандай?",
+            answers: [
+                "Сауда ережелерін жазу",
+                "Түркі халқының тарихын, ерлігін және ел бірлігін баяндау",
+                "Егіншілік туралы мәлімет беру",
+                "Заңдар жинағын жасау"
+            ],
+            correct: 1
+        },
+
+        {
+            question: "Орхон-Енисей жазба ескерткіштерінің тарихи маңызы неде?",
+            answers: [
+                "Түркі халықтарының тарихы мен мәдениетін танытады",
+                "Тек географиялық мәлімет береді",
+                "Тек діни өлеңдерден тұрады",
+                "Тек сауда туралы баяндайды"
+            ],
+            correct: 0
+        }
+
+    ];
+
+
+    /*
+    ========================================
+    ПЕРЕМЕННЫЕ
+    ========================================
+    */
+
+    let currentQuestion = 0;
+    let score = 0;
+    let selectedAnswer = null;
+
+    let userAnswers = [];
+
+
+    /*
+    ========================================
+    ПОЛУЧАЕМ ЭЛЕМЕНТЫ
+    ========================================
+    */
+
+    const quiz = document.getElementById("quiz");
+
+    const result = document.getElementById("result");
+
+    const questionElement =
+        document.getElementById("question");
+
+    const answersElement =
+        document.getElementById("answers");
+
+    const nextButton =
+        document.getElementById("nextButton");
+
+    const questionNumber =
+        document.getElementById("questionNumber");
+
+    const points =
+        document.getElementById("points");
+
+    const progress =
+        document.getElementById("progress");
+
+
+    /*
+    ========================================
+    ПОКАЗАТЬ ВОПРОС
+    ========================================
+    */
+
+    function showQuestion() {
+
+        selectedAnswer = null;
+
+        nextButton.disabled = true;
+
+        const question = questions[currentQuestion];
+
+        questionElement.textContent =
+            (currentQuestion + 1) + ". " +
+            question.question;
+
+        questionNumber.textContent =
+            (currentQuestion + 1) +
+            " / " +
+            questions.length;
+
+        points.textContent =
+            score + " балл";
+
+        progress.style.width =
+            ((currentQuestion + 1) /
+            questions.length * 100) + "%";
+
+
+        answersElement.innerHTML = "";
+
+
+        question.answers.forEach((answer, index) => {
+
+            const button =
+                document.createElement("button");
+
+            button.className = "answer";
+
+            button.textContent =
+                String.fromCharCode(65 + index) +
+                ") " +
+                answer;
+
+            button.onclick = function() {
+
+                selectAnswer(index, button);
+
+            };
+
+            answersElement.appendChild(button);
+
+        });
+
+
+        if (currentQuestion === questions.length - 1) {
+
+            nextButton.textContent =
+                "Нәтижені көру ✓";
+
+        } else {
+
+            nextButton.textContent =
+                "Келесі →";
+
+        }
+
+    }
+
+
+    /*
+    ========================================
+    ВЫБОР ОТВЕТА
+    ========================================
+    */
+
+    function selectAnswer(index, button) {
+
+        const buttons =
+            document.querySelectorAll(".answer");
+
+        buttons.forEach(function(btn) {
+
+            btn.classList.remove("selected");
+
+        });
+
+
+        button.classList.add("selected");
+
+        selectedAnswer = index;
+
+        nextButton.disabled = false;
+
+    }
+
+
+    /*
+    ========================================
+    СЛЕДУЮЩИЙ ВОПРОС
+    ========================================
+    */
+
+    function nextQuestion() {
+
+        if (selectedAnswer === null) {
+            return;
+        }
+
+
+        const question =
+            questions[currentQuestion];
+
+
+        const isCorrect =
+            selectedAnswer === question.correct;
+
+
+        if (isCorrect) {
+
+            score++;
+
+        }
+
+
+        userAnswers.push({
+
+            question: question.question,
+
+            selected: selectedAnswer,
+
+            correct: question.correct,
+
+            isCorrect: isCorrect
+
+        });
+
+
+        currentQuestion++;
+
+
+        if (currentQuestion < questions.length) {
+
+            showQuestion();
+
+        } else {
+
+            showResult();
+
+        }
+
+    }
+
+
+    /*
+    ========================================
+    ПОКАЗАТЬ РЕЗУЛЬТАТ
+    ========================================
+    */
+
+    function showResult() {
+
+        quiz.classList.add("hidden");
+
+        result.classList.remove("hidden");
+
+
+        document.getElementById("finalScore")
+            .textContent =
+            score + " / " + questions.length;
+
+
+        const percentage =
+            Math.round(
+                score / questions.length * 100
+            );
+
+
+        let message = "";
+        let icon = "";
+
+
+        if (score === 10) {
+
+            icon = "🏆";
+
+            message =
+                "Керемет! Барлық сұраққа дұрыс жауап бердіңіз!";
+
+        }
+
+        else if (score >= 8) {
+
+            icon = "🎉";
+
+            message =
+                "Өте жақсы нәтиже! Материалды жақсы меңгергенсіз.";
+
+        }
+
+        else if (score >= 5) {
+
+            icon = "👍";
+
+            message =
+                "Жақсы! Бірақ материалды тағы бір рет қайталап көріңіз.";
+
+        }
+
+        else {
+
+            icon = "📚";
+
+            message =
+                "Материалды қайталап, тестті қайта тапсырып көріңіз.";
+
+        }
+
+
+        document.getElementById("resultIcon")
+            .textContent = icon;
+
+
+        document.getElementById("resultMessage")
+            .innerHTML =
+            message +
+            "<br><br>" +
+            "<b>Нәтиже: " +
+            percentage +
+            "%</b>";
+
+
+        showReview();
+
+    }
+
+
+    /*
+    ========================================
+    РАЗБОР ОТВЕТОВ
+    ========================================
+    */
+
+    function showReview() {
+
+        const reviewList =
+            document.getElementById("reviewList");
+
+
+        reviewList.innerHTML = "";
+
+
+        userAnswers.forEach(function(item, index) {
+
+            const question =
+                questions[index];
+
+
+            const div =
+                document.createElement("div");
+
+
+            div.className =
+                "review-item " +
+                (item.isCorrect
+                    ? "correct-item"
+                    : "wrong-item");
+
+
+            if (item.isCorrect) {
+
+                div.innerHTML = `
+
+                    <div class="review-question">
+                        ${index + 1}. ${item.question}
+                    </div>
+
+                    <div class="correct-text">
+                        ✓ Дұрыс жауап:
+                        ${question.answers[item.correct]}
+                    </div>
+
+                `;
+
+            } else {
+
+                div.innerHTML = `
+
+                    <div class="review-question">
+                        ${index + 1}. ${item.question}
+                    </div>
+
+                    <div class="wrong-text">
+                        ✗ Сіздің жауабыңыз:
+                        ${question.answers[item.selected]}
+                    </div>
+
+                    <div class="correct-text">
+                        ✓ Дұрыс жауап:
+                        ${question.answers[item.correct]}
+                    </div>
+
+                `;
+
+            }
+
+
+            reviewList.appendChild(div);
+
+        });
+
+    }
+
+
+    /*
+    ========================================
+    ПОВТОРНЫЙ ТЕСТ
+    ========================================
+    */
+
+    function restartQuiz() {
+
+        currentQuestion = 0;
+
+        score = 0;
+
+        selectedAnswer = null;
+
+        userAnswers = [];
+
+
+        result.classList.add("hidden");
+
+        quiz.classList.remove("hidden");
+
+
+        showQuestion();
+
+
+        window.scrollTo({
+
+            top: 0,
+
+            behavior: "smooth"
+
+        });
+
+    }
+
+
+    /*
+    ========================================
+    ЗАПУСК
+    ========================================
+    */
+
+    showQuestion();
+
+</script>
+
+</body>
+</html>
